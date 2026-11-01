@@ -1,7 +1,7 @@
 "use strict";
 
 const CONFIG = {
-  telegram: "https://t.me/i_kate_myself",
+  telegram: "https://t.me/karolLir",
   formEndpoint: ""
 };
 
