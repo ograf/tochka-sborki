@@ -275,19 +275,20 @@
             <h2>Что добавить в хронику?</h2>
             <p>Вопрос, идея, предложение по организации или просто желание следить за проектом — напишите оргкомитету. Форма работает без регистрации.</p>
             <ul class="contact-list">
-              <li><span>Телеграм</span><a href="https://t.me/karolLir" target="_blank" rel="noopener noreferrer">@karolLir</a></li>
+              <li><span>Связь</span><strong>через форму на этой странице</strong></li>
               <li><span>Сайт</span><strong>в общем доступе</strong></li>
               <li><span>Обновлено</span><time datetime="2026-11-01">1 ноября 2026</time></li>
             </ul>
           </div>
 
-          <form class="feedback-form" id="feedback-form" novalidate>
+          <form class="feedback-form" id="feedback-form" name="feedback" method="POST" action="/#feedback" data-netlify="true" data-netlify-recaptcha="true" netlify-honeypot="company" novalidate>
+            <input type="hidden" name="form-name" value="feedback">
             <div class="form-row">
               <label for="name">Имя <span class="optional">необязательно</span>
                 <input id="name" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться">
               </label>
               <label for="contact">Связь <span class="optional">необязательно</span>
-                <input id="contact" name="contact" type="text" autocomplete="email" placeholder="Telegram или e-mail">
+                <input id="contact" name="contact" type="text" autocomplete="off" placeholder="Как с вами связаться">
               </label>
             </div>
 
@@ -318,9 +319,12 @@
               <label for="company">Компания<input id="company" name="company" type="text" tabindex="-1" autocomplete="off"></label>
             </div>
 
+            <div class="form-captcha" data-netlify-recaptcha="true"></div>
+            <p class="form-captcha-note">Форма защищена reCAPTCHA. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a> и <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">условия использования</a> Google.</p>
+
             <div class="form-actions">
               <button class="btn btn-primary" type="submit">Отправить</button>
-              <p class="form-hint">Если форма не подключена к сервису, она скопирует текст и предложит открыть чат Telegram.</p>
+              <p class="form-hint">Сообщение уйдёт оргкомитету. Если оставите контакт, сможем ответить.</p>
             </div>
             <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
           </form>
@@ -508,7 +512,7 @@
           </details>
           <details>
             <summary>Как связаться с оргкомитетом?</summary>
-            <p>Через форму обратной связи или Telegram <a href="https://t.me/karolLir" target="_blank" rel="noopener noreferrer">@karolLir</a>.</p>
+            <p>Через форму обратной связи на этой странице. Прямые контакты оргкомитета не публикуются.</p>
           </details>
         </div>
       </div>
@@ -523,7 +527,7 @@
         </div>
         <div class="closing-actions">
           <a class="btn btn-primary" href="#feedback">Оставить сообщение</a>
-          <a class="btn btn-ghost" href="https://t.me/karolLir" target="_blank" rel="noopener noreferrer">Telegram оргкомитета</a>
+          <a class="btn btn-ghost" href="polozhenie.html">Читать положение</a>
         </div>
       </div>
     </section>

@@ -1003,6 +1003,25 @@ blockquote {
   overflow: hidden;
 }
 
+.form-captcha {
+  min-height: 78px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.form-captcha-note {
+  margin: 8px 0 0;
+  color: var(--muted-2);
+  font-size: 0.66rem;
+  line-height: 1.5;
+}
+
+.form-captcha-note a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .form-actions {
   display: flex;
   align-items: center;
@@ -1694,6 +1713,13 @@ blockquote {
   }
 }
 
+@media (max-width: 360px) {
+  .form-captcha .g-recaptcha {
+    transform: scale(0.88);
+    transform-origin: left top;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2010,33 +2036,10 @@ blockquote {
   line-height: 1.7;
 }
 
-.legal-contact-list {
-  display: grid;
-  gap: 10px;
-  margin: 20px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.legal-contact-list li {
-  display: flex;
-  gap: 16px;
-  align-items: baseline;
-}
-
-.legal-contact-list span {
-  width: 74px;
-  flex: 0 0 auto;
+.legal-private-note {
+  margin-top: 14px;
   color: var(--muted-2);
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.legal-contact-list a {
-  font-weight: 700;
-  overflow-wrap: anywhere;
+  font-size: 0.82rem;
 }
 
 .legal-doc-footer {
@@ -2222,15 +2225,6 @@ blockquote {
     width: 100%;
   }
 
-  .legal-contact-list li {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .legal-contact-list span {
-    width: auto;
-  }
 }
 
 @media print {

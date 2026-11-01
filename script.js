@@ -1,10 +1,5 @@
 "use strict";
 
-const CONFIG = {
-  telegram: "https://t.me/karolLir",
-  formEndpoint: ""
-};
-
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const header = document.querySelector(".site-header");
@@ -98,19 +93,10 @@ const feedbackCard = document.getElementById("feedback");
 const formStatus = document.getElementById("form-status");
 const feedbackForm = document.getElementById("feedback-form");
 
-const setFormStatus = (message, { error = false, link = "" } = {}) => {
+const setFormStatus = (message, { error = false } = {}) => {
   if (!formStatus) return;
   formStatus.textContent = message;
   formStatus.classList.toggle("is-error", error);
-
-  if (link) {
-    const anchor = document.createElement("a");
-    anchor.href = link;
-    anchor.target = "_blank";
-    anchor.rel = "noopener noreferrer";
-    anchor.textContent = "Открыть Telegram";
-    formStatus.append(" ", anchor);
-  }
 };
 
 const clearFormStatus = () => {
@@ -186,62 +172,10 @@ lightbox?.addEventListener("close", () => {
   lightboxTrigger?.focus();
 });
 
-const copyText = async (text) => {
-  if (navigator.clipboard && window.isSecureContext) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      // The fallback below handles browsers that deny clipboard access.
-    }
+const resetCaptcha = () => {
+  if (typeof window.grecaptcha?.reset === "function") {
+    window.grecaptcha.reset();
   }
-
-  const helper = document.createElement("textarea");
-  helper.value = text;
-  helper.setAttribute("readonly", "");
-  helper.style.position = "fixed";
-  helper.style.top = "0";
-  helper.style.left = "-9999px";
-  helper.style.opacity = "0";
-  document.body.appendChild(helper);
-  helper.select();
-
-  let copied = false;
-  try {
-    copied = document.execCommand("copy");
-  } catch {
-    copied = false;
-  }
-  helper.remove();
-  return copied;
-};
-
-const buildMessage = (payload) => {
-  const lines = [
-    "Обращение с сайта «Точка сборки»",
-    `Тема: ${payload.topic}`
-  ];
-  if (payload.name) lines.push(`Имя: ${payload.name}`);
-  if (payload.contact) lines.push(`Связь: ${payload.contact}`);
-  lines.push("", "Сообщение:", payload.message);
-  return lines.join("\n");
-};
-
-const useTelegramFallback = async (text, prefix = "") => {
-  const copied = await copyText(text);
-
-  if (copied) {
-    setFormStatus(`${prefix}Текст скопирован. Вставьте его в чат Telegram:`, {
-      link: CONFIG.telegram
-    });
-    feedbackForm?.reset();
-    return;
-  }
-
-  setFormStatus(
-    `${prefix}Не удалось скопировать текст автоматически. Скопируйте сообщение из поля и отправьте его в Telegram:`,
-    { error: true, link: CONFIG.telegram }
-  );
 };
 
 feedbackForm?.addEventListener("input", clearFormStatus);
@@ -259,48 +193,37 @@ feedbackForm?.addEventListener("submit", async (event) => {
     return;
   }
 
-  const payload = {
-    name: String(data.get("name") || "").trim(),
-    contact: String(data.get("contact") || "").trim(),
-    topic: String(data.get("topic") || "").trim(),
-    message: String(data.get("message") || "").trim(),
-    consent: data.get("consent") === "on",
-    page: window.location.href,
-    submittedAt: new Date().toISOString()
-  };
+  const topic = String(data.get("topic") || "").trim();
+  const message = String(data.get("message") || "").trim();
+  const consent = data.get("consent") === "on";
 
-  if (!payload.topic || !payload.message) {
+  if (!topic || !message) {
     formStatus.textContent = "Заполните тему и сообщение.";
     formStatus.classList.add("is-error");
     feedbackForm.reportValidity();
     return;
   }
 
-  if (!payload.consent) {
+  if (!consent) {
     formStatus.textContent = "Подтвердите согласие на обработку сообщения.";
     formStatus.classList.add("is-error");
     feedbackForm.reportValidity();
     return;
   }
 
-  const text = buildMessage(payload);
-
-  if (!CONFIG.formEndpoint) {
-    await useTelegramFallback(text);
-    return;
-  }
+  data.set("page", window.location.href);
+  data.set("submittedAt", new Date().toISOString());
 
   formStatus.textContent = "Отправляю сообщение…";
   formStatus.classList.remove("is-error");
 
   try {
-    const response = await fetch(CONFIG.formEndpoint, {
+    const response = await fetch("/", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
+        "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: JSON.stringify(payload)
+      body: new URLSearchParams(data).toString()
     });
 
     if (!response.ok) throw new Error(`Request failed: ${response.status}`);
@@ -308,7 +231,10 @@ feedbackForm?.addEventListener("submit", async (event) => {
     formStatus.textContent = "Сообщение отправлено. Спасибо!";
     formStatus.classList.remove("is-error");
     feedbackForm.reset();
+    resetCaptcha();
   } catch {
-    await useTelegramFallback(text, "Сервис отправки недоступен. ");
+    formStatus.textContent = "Не удалось отправить сообщение. Проверьте капчу и попробуйте ещё раз.";
+    formStatus.classList.add("is-error");
+    resetCaptcha();
   }
 });
