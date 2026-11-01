@@ -886,6 +886,7 @@ blockquote {
 }
 
 .feedback-form {
+  min-width: 0;
   padding: clamp(26px, 4vw, 40px);
 }
 
