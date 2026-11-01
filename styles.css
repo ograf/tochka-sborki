@@ -1007,7 +1007,6 @@ blockquote {
 .form-captcha {
   min-height: 78px;
   margin-top: 20px;
-  overflow: hidden;
 }
 
 .form-captcha-note {
@@ -1718,6 +1717,12 @@ blockquote {
   .form-captcha .g-recaptcha {
     transform: scale(0.88);
     transform-origin: left top;
+  }
+}
+
+@media (max-width: 330px) {
+  .form-captcha .g-recaptcha {
+    transform: scale(0.8);
   }
 }
 
